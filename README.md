@@ -13,5 +13,5 @@ Note 2: Your code should be flexible to run for different values of N (the numbe
 
 run
 ```
-python NQueens.python 10 && python NQueens.python 50 && python NQueens.python 100 && python NQueens.python 150 && python NQueens.python 250 && python NQueens.python 500 && python NQueens.python 750 && python NQueens.python 1000
+python NQueens.py 10 && python NQueens.py 50 && python NQueens.py 100 && python NQueens.py 150 && python NQueens.py 250 && python NQueens.py 500 && python NQueens.py 750 && python NQueens.py 1000
 ```
