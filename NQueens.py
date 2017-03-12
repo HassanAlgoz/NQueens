@@ -15,35 +15,9 @@ QUEEN = "Q"
 EMPTY = "#"
 
 def conflicts(row, col):
-	numThreats = 0
-	# Column
-	for i in range(n):
-		if board[i][col] == QUEEN and i != row:
-			numThreats += 1
-			break
-
-	# Top-Left to Bottom-Right (Diagonal)
-	m = min(row, col)
-	i = row-m
-	j = col-m
-	while(i < n and j < n):
-		if board[i][j] == QUEEN and i != row and j != col:
-			numThreats += 1
-			break
-		i += 1
-		j += 1
-
-	# Top-Right to Bottom-Left (Diagonal)
-	m = min(row, n-col-1)
-	i = row-m
-	j = col+m
-	while(i < n and j >= 0):
-		if board[i][j] == QUEEN and i != row and j != col:
-			numThreats += 1
-			break
-		i += 1
-		j -= 1
-
+	numThreats = rightAboveConflict(row, col) + rightBottomConflict(row, col)
+	numThreats += leftAboveConflict(row, col) + aboveConflict(row, col)
+	numThreats += bottomConflict(row, col)
 	return numThreats
 
 
@@ -54,31 +28,109 @@ def updateConflicts(row, col):
 	# them. This way we don't have to check the whole
 	# board.
 
-	# Column
-	for i in range(n):
-		if board[i][col] == QUEEN and i != row:
-			rowConflicts[i] = conflicts(i, col)
+	# Above Queen
+	i = row
+	while(i > 0):
+		i -= 1
+		if board[i][col] == QUEEN:
+			rowConflicts[i] = rowConflicts[i] - 1 + bottomConflict(i, col)
+			break
 
-	# Top-Left to Bottom-Right (Diagonal)
-	m = min(row, col)
-	i = row-m
-	j = col-m
-	while(i < n and j < n):
-		if board[i][j] == QUEEN and i != row and j != col:
-			rowConflicts[i] = conflicts(i, j)
+	# Below Queen
+	i = row
+	while(i < n-1):
+		i += 1
+		if board[i][col] == QUEEN:
+			rowConflicts[i] = rowConflicts[i] - 1 + aboveConflict(i, col)
+			break
+
+	# rightAbove Queen
+	i = row
+	j = col
+	while(i > 0 and j < n-1):
+		i -= 1
+		j += 1
+		if board[i][j] == QUEEN:
+			rowConflicts[i] = rowConflicts[i] - 1 + leftBottomConflict(i, j)
+			break
+
+	# rightBottom Queen
+	i = row
+	j = col
+	while(i < n-1 and j < n-1):
 		i += 1
 		j += 1
+		if board[i][j] == QUEEN:
+			rowConflicts[i] = rowConflicts[i] - 1 + leftAboveConflict(i, j)
+			break
 
-	# Top-Right to Bottom-Left (Diagonal)
-	m = min(row, n-col-1)
-	i = row-m
-	j = col+m
-	while(i < n and j >= 0):
-		if board[i][j] == QUEEN and i != row and j != col:
-			rowConflicts[i] = conflicts(i, j)
+	# leftAbove Queen
+	i = row
+	j = col
+	while(i > 0 and j > 0):
+		i -= 1
+		j -= 1
+		if board[i][j] == QUEEN:
+			rowConflicts[i] = rowConflicts[i] - 1 + rightBottomConflict(i, j)
+			break
+
+	# leftBottom Queen
+	i = row
+	j = col
+	while(i < n-1 and j > 0):
 		i += 1
 		j -= 1
+		if board[i][j] == QUEEN:
+			rowConflicts[i] = rowConflicts[i] - 1 + rightAboveConflict(i, j)
+			break
 
+
+
+def aboveConflict(row, col):
+	while(row > 0):
+		row -= 1
+		if board[row][col] == QUEEN:
+			return 1
+	return 0
+
+def bottomConflict(row, col):
+	while(row < n-1):
+		row += 1
+		if board[row][col] == QUEEN:
+			return 1
+	return 0
+
+def rightAboveConflict(row, col):
+	while(row > 0 and col < n-1):
+		row -= 1
+		col += 1
+		if board[row][col] == QUEEN:
+			return 1
+	return 0
+
+def rightBottomConflict(row, col):
+	while(row < n-1 and col < n-1):
+		row += 1
+		col += 1
+		if board[row][col] == QUEEN:
+			return 1
+	return 0
+
+def leftAboveConflict(row, col):
+	while(row > 0 and col > 0):
+		row -= 1
+		col -= 1
+		if board[row][col] == QUEEN:
+			return 1
+	return 0
+
+def leftBottomConflict(row, col):
+	while(row < n-1 and col > 0):
+		row += 1
+		col -= 1
+		if board[row][col] == QUEEN:
+			return 1
+	return 0
 
 def move(row, old, new):
 	row[old] = EMPTY
@@ -154,16 +206,20 @@ if __name__ == "__main__":
 			continue
 
 		# Move Queen: assign another value to the variable (row)
-		move(myRow, initialIndex, minConflictIndex)
-		rowConflicts[r] = minConflict
-		# printBoard()
-		# print("-"*n)
 		# Update conflicts on variables who have conflict with
 		# the position of this Queen before the move and after.
+		move(myRow, initialIndex, minConflictIndex)
+		rowConflicts[r] = minConflict
 		updateConflicts(r, initialIndex)
 		updateConflicts(r, minConflictIndex)
+		# printBoard()
+		# print("-"*n)
+
+		if numberOfMoves % 1000 == 0:
+			print "%d" % (numberOfMoves)
 
 		# Goal Test
+		# if numberOfMoves % (n/10) == 0:
 		if sum(rowConflicts) == 0:
 			# printBoard()
 			timeEnd = float(time.time())
