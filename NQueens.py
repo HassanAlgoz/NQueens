@@ -192,6 +192,7 @@ if __name__ == "__main__":
 		# This is used to break ties fast
 		minIndexes = []
 		for j in range(n):
+			# skip self index
 			if j == initialIndex:
 				continue
 			if cellsConflicts[j] == minConflict:
@@ -202,22 +203,20 @@ if __name__ == "__main__":
 		if len(minIndexes) > 0:
 			rnd = minIndexes[random.randint(0, len(minIndexes) - 1)]
 			minConflictIndex = rnd
-		else:
-			continue
 
-		# Move Queen: assign another value to the variable (row)
-		# Update conflicts on variables who have conflict with
-		# the position of this Queen before the move and after.
-		move(myRow, initialIndex, minConflictIndex)
-		rowConflicts[r] = minConflict
-		updateConflicts(r, initialIndex)
-		updateConflicts(r, minConflictIndex)
-		# printBoard()
-		# print("-"*n)
+			# Move Queen: assign another value to the variable (row)
+			# Update conflicts on variables who have conflict with
+			# the position of this Queen before the move and after.
+			move(myRow, initialIndex, minConflictIndex)
+			rowConflicts[r] = minConflict
+			updateConflicts(r, initialIndex)
+			updateConflicts(r, minConflictIndex)
+			# printBoard()
+			# print("-"*n)
+
 
 		if numberOfMoves % 1000 == 0:
 			print "%d" % (numberOfMoves)
-
 		# Goal Test
 		# if numberOfMoves % (n/10) == 0:
 		if sum(rowConflicts) == 0:

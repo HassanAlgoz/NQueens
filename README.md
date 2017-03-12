@@ -10,3 +10,8 @@ Note 2: Your code should be flexible to run for different values of N (the numbe
 | N           | 10^1 | 10^2 | 10^3 | 10^4 |
 |-------------|:----:|-----:|------|------|
 | Time (sec?) |      |      |      |      |
+
+run
+```
+py NQueens.py 10 && py NQueens.py 50 && py NQueens.py 100 && py NQueens.py 150 && py NQueens.py 250 && py NQueens.py 500 && py NQueens.py 750 && py NQueens.py 1000
+```
