@@ -20,6 +20,7 @@ def conflicts(row, col):
 	for i in range(n):
 		if board[i][col] == QUEEN and i != row:
 			numThreats += 1
+			break
 
 	# Top-Left to Bottom-Right (Diagonal)
 	m = min(row, col)
@@ -28,6 +29,7 @@ def conflicts(row, col):
 	while(i < n and j < n):
 		if board[i][j] == QUEEN and i != row and j != col:
 			numThreats += 1
+			break
 		i += 1
 		j += 1
 
@@ -38,6 +40,7 @@ def conflicts(row, col):
 	while(i < n and j >= 0):
 		if board[i][j] == QUEEN and i != row and j != col:
 			numThreats += 1
+			break
 		i += 1
 		j -= 1
 
@@ -118,6 +121,48 @@ if __name__ == "__main__":
 	while(True):
 		numberOfMoves += 1
 
+		r = random.randint(0, n-1)
+		# Assign it to minimum conflict column
+		myRow = board[r]
+		minConflict = rowConflicts[r]
+		initialIndex = board[r].index(QUEEN)
+		minConflictIndex = initialIndex
+		# Evaluate conflicts for the whole row
+		cellsConflicts = []
+		for j in range(n):
+			conflictResult = conflicts(r, j)
+			if conflictResult < minConflict:
+				minConflict = conflictResult
+				minConflictIndex = j
+			cellsConflicts.append(conflictResult)
+		
+		# Inlist all indexes, where conflict == minConflict
+		# This is used to break ties fast
+		minIndexes = []
+		for j in range(n):
+			if j == initialIndex:
+				continue
+			if cellsConflicts[j] == minConflict:
+				minIndexes.append(j)
+
+		# Break ties randomly
+		# only if there is a duplicate min conflict
+		if len(minIndexes) > 0:
+			rnd = minIndexes[random.randint(0, len(minIndexes) - 1)]
+			minConflictIndex = rnd
+		else:
+			continue
+
+		# Move Queen: assign another value to the variable (row)
+		move(myRow, initialIndex, minConflictIndex)
+		rowConflicts[r] = minConflict
+		# printBoard()
+		# print("-"*n)
+		# Update conflicts on variables who have conflict with
+		# the position of this Queen before the move and after.
+		updateConflicts(r, initialIndex)
+		updateConflicts(r, minConflictIndex)
+
 		# Goal Test
 		if sum(rowConflicts) == 0:
 			# printBoard()
@@ -127,36 +172,3 @@ if __name__ == "__main__":
 			print "     \tN\tSeconds\tMoves"
 			print "     \t%d\t%.2f\t%d" % (n, timeDiff, numberOfMoves)
 			break
-
-		# Select a random variable (row)
-		r = random.randint(0, n-1)
-		# while(rowConflicts[r] == 0):
-		# 	r = random.randint(0, n-1)
-		# Assign it to minimum conflict column
-		myRow = board[r]
-		minConflict = rowConflicts[r]
-		initialIndex = board[r].index(QUEEN)
-		minConflictIndex = initialIndex
-		cellsConflicts = []
-		for j in range(n):
-			conflictResult = conflicts(r, j)
-			if (conflictResult < minConflict):
-				minConflict = conflictResult
-			cellsConflicts.append(conflictResult)
-		# Break ties randomly
-		while True:
-			rnd = random.randint(0,n-1)
-			if cellsConflicts[rnd] == minConflict:
-				minConflictIndex = rnd
-				break
-
-		# Move Queen: assign another value to the variable (row)
-		move(myRow, initialIndex, minConflictIndex)
-		rowConflicts[r] = minConflict
-		# Update conflicts on variables who have conflict with
-		# the position of this Queen before the move and after.
-		updateConflicts(r, initialIndex)
-		updateConflicts(r, minConflictIndex)
-
-		# printBoard()
-	# print(rowConflicts)
