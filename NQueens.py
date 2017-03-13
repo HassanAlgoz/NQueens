@@ -174,12 +174,13 @@ if __name__ == "__main__":
 	# -------------------------------------------------------------------
 	# Game Loop (one game)
 	numberOfMoves = 0
+	numberOfLoops = 0
 	while(True):
-		numberOfMoves += 1
+		numberOfLoops += 1
 
 		# Select a radnom variable row
 		r = random.randint(0, n-1)
-		# Assign it the minimum conflict column -------------------------
+		# Assign it the minimum conflict column
 		myRow = board[r]
 		minConflict = rowConflicts[r]
 		initialIndex = board[r].index(QUEEN)
@@ -210,6 +211,7 @@ if __name__ == "__main__":
 		# Update conflicts on variables who have conflict with
 		# the position of this Queen before the move and after.
 		if minConflictIndex != initialIndex:
+			numberOfMoves += 1
 			move(myRow, initialIndex, minConflictIndex)
 			rowConflicts[r] = minConflict
 			updateConflicts(r, initialIndex)
@@ -217,14 +219,15 @@ if __name__ == "__main__":
 
 
 		# Print number of steps
-		if numberOfMoves % 1000 == 0:
-			print "%d" % (numberOfMoves)
+		if numberOfLoops % 1000 == 0:
+			print "%d %d" % (numberOfLoops, numberOfMoves)
 		# Goal Test
-		if sum(rowConflicts) == 0:
-			printBoard()
-			timeEnd = float(time.time())
-			timeDiff = timeEnd - timeStart
-			print "DONE!"
-			print "     \tN\tSeconds\tMoves"
-			print "     \t%d\t%.2f\t%d" % (n, timeDiff, numberOfMoves)
-			break
+		if minConflictIndex == 0:
+			if sum(rowConflicts) == 0:
+				# printBoard()
+				timeEnd = float(time.time())
+				timeDiff = timeEnd - timeStart
+				print "DONE!"
+				print "     \tN\tSeconds\tLoops\tMoves"
+				print "     \t%d\t%.2f\t%d\t%d" % (n, timeDiff, numberOfLoops, numberOfMoves)
+				break
