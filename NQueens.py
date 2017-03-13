@@ -14,6 +14,8 @@ import time
 QUEEN = "Q"
 EMPTY = "#"
 
+
+
 def conflicts(row, col):
 	numThreats = rightAboveConflict(row, col) + rightBottomConflict(row, col)
 	numThreats += leftAboveConflict(row, col) + leftBottomConflict(row, col)
@@ -131,13 +133,24 @@ def leftBottomConflict(row, col):
 			return 1
 	return 0
 
+
 def move(row, old, new):
 	row[old] = EMPTY
 	row[new] = QUEEN
 
+
 def printBoard():
 	for i in range(n):
 		print("".join(board[i]))
+
+
+def isGoal():
+	for i in range(n):
+		for j in range(n):
+			if board[i][j] == QUEEN:
+				if conflicts(i, j) != 0:
+					return False
+	return True
 
 
 if __name__ == "__main__":
@@ -162,15 +175,6 @@ if __name__ == "__main__":
 
 	timeStart = float(time.time())
 
-	# Lookup table for minimum conflicts of variables (rows)
-	# Updated when necessary only, rather than having to check
-	# all queens. We only check affected variables. O(n) Space Complexity
-	rowConflicts = []
-	for i in range(n):
-		col = board[i].index(QUEEN)
-		rowConflicts.append(conflicts(i, col))
-
-
 	# -------------------------------------------------------------------
 	# Game Loop (one game)
 	numberOfMoves = 0
@@ -182,8 +186,8 @@ if __name__ == "__main__":
 		r = random.randint(0, n-1)
 		# Assign it the minimum conflict column
 		myRow = board[r]
-		minConflict = rowConflicts[r]
 		initialIndex = board[r].index(QUEEN)
+		minConflict = conflicts(r, initialIndex)
 		minConflictIndex = initialIndex
 		# Evaluate conflicts for the whole row
 		cellsConflicts = []
@@ -213,9 +217,6 @@ if __name__ == "__main__":
 		if minConflictIndex != initialIndex:
 			numberOfMoves += 1
 			move(myRow, initialIndex, minConflictIndex)
-			rowConflicts[r] = minConflict
-			updateConflicts(r, initialIndex)
-			updateConflicts(r, minConflictIndex)
 
 
 		# Print number of steps
@@ -223,11 +224,11 @@ if __name__ == "__main__":
 			print "%d %d" % (numberOfLoops, numberOfMoves)
 		# Goal Test
 		if minConflict == 0:
-			if sum(rowConflicts) == 0:
+			if isGoal():
 				# printBoard()
 				timeEnd = float(time.time())
 				timeDiff = timeEnd - timeStart
 				print "DONE!"
-				print "     \tN\tSeconds\tLoops\tMoves"
-				print "     \t%d\t%.2f\t%d\t%d" % (n, timeDiff, numberOfLoops, numberOfMoves)
+				print "     \tN\tSeconds\tLoops\tMoves\tMoves/Loops Ratio"
+				print "     \t%d\t%.2f\t%d\t%d\t%.2f" % (n, timeDiff, numberOfLoops, numberOfMoves, float(numberOfMoves)/numberOfLoops)
 				break
