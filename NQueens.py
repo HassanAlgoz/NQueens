@@ -222,7 +222,7 @@ if __name__ == "__main__":
 		if numberOfLoops % 1000 == 0:
 			print "%d %d" % (numberOfLoops, numberOfMoves)
 		# Goal Test
-		if minConflictIndex == 0:
+		if minConflict == 0:
 			if sum(rowConflicts) == 0:
 				# printBoard()
 				timeEnd = float(time.time())
