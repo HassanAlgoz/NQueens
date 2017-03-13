@@ -33,7 +33,7 @@ def updateConflicts(row, col):
 	while(i > 0):
 		i -= 1
 		if board[i][col] == QUEEN:
-			rowConflicts[i] = rowConflicts[i] - 1 + bottomConflict(i, col)
+			rowConflicts[i] = conflicts(i, col)
 			break
 
 	# Below Queen
@@ -41,7 +41,7 @@ def updateConflicts(row, col):
 	while(i < n-1):
 		i += 1
 		if board[i][col] == QUEEN:
-			rowConflicts[i] = rowConflicts[i] - 1 + aboveConflict(i, col)
+			rowConflicts[i] = conflicts(i, col)
 			break
 
 	# rightAbove Queen
@@ -51,7 +51,7 @@ def updateConflicts(row, col):
 		i -= 1
 		j += 1
 		if board[i][j] == QUEEN:
-			rowConflicts[i] = rowConflicts[i] - 1 + leftBottomConflict(i, j)
+			rowConflicts[i] = conflicts(i, j)
 			break
 
 	# rightBottom Queen
@@ -61,7 +61,7 @@ def updateConflicts(row, col):
 		i += 1
 		j += 1
 		if board[i][j] == QUEEN:
-			rowConflicts[i] = rowConflicts[i] - 1 + leftAboveConflict(i, j)
+			rowConflicts[i] = conflicts(i, j)
 			break
 
 	# leftAbove Queen
@@ -71,7 +71,7 @@ def updateConflicts(row, col):
 		i -= 1
 		j -= 1
 		if board[i][j] == QUEEN:
-			rowConflicts[i] = rowConflicts[i] - 1 + rightBottomConflict(i, j)
+			rowConflicts[i] = conflicts(i, j)
 			break
 
 	# leftBottom Queen
@@ -81,9 +81,8 @@ def updateConflicts(row, col):
 		i += 1
 		j -= 1
 		if board[i][j] == QUEEN:
-			rowConflicts[i] = rowConflicts[i] - 1 + rightAboveConflict(i, j)
+			rowConflicts[i] = conflicts(i, j)
 			break
-
 
 
 def aboveConflict(row, col):
@@ -147,6 +146,7 @@ if __name__ == "__main__":
 	print("Solving for " +str(n)+ " Queens..")
 
 	# Initialize Board: random assignment to all variables (rows)
+	timeStart = float(time.time())
 	board = []
 	for i in range(n):
 		row = []
@@ -155,6 +155,10 @@ if __name__ == "__main__":
 			row.append(EMPTY)
 		row[r] = QUEEN
 		board.append(row)
+
+	timeEnd = float(time.time())
+	timeDiff = float(timeEnd - timeStart)
+	print "Board Initialized in %.fms" % (timeDiff*1000)
 
 	timeStart = float(time.time())
 
@@ -173,8 +177,9 @@ if __name__ == "__main__":
 	while(True):
 		numberOfMoves += 1
 
+		# Select a radnom variable (row)
 		r = random.randint(0, n-1)
-		# Assign it to minimum conflict column
+		# Assign it the minimum conflict value (column)
 		myRow = board[r]
 		minConflict = rowConflicts[r]
 		initialIndex = board[r].index(QUEEN)
@@ -192,9 +197,6 @@ if __name__ == "__main__":
 		# This is used to break ties fast
 		minIndexes = []
 		for j in range(n):
-			# skip self index
-			if j == initialIndex:
-				continue
 			if cellsConflicts[j] == minConflict:
 				minIndexes.append(j)
 
@@ -204,21 +206,18 @@ if __name__ == "__main__":
 			rnd = minIndexes[random.randint(0, len(minIndexes) - 1)]
 			minConflictIndex = rnd
 
-			# Move Queen: assign another value to the variable (row)
-			# Update conflicts on variables who have conflict with
-			# the position of this Queen before the move and after.
+		# Move Queen: assign another value to the variable (row)
+		# Update conflicts on variables who have conflict with
+		# the position of this Queen before the move and after.
+		if minConflictIndex != initialIndex:
 			move(myRow, initialIndex, minConflictIndex)
 			rowConflicts[r] = minConflict
 			updateConflicts(r, initialIndex)
 			updateConflicts(r, minConflictIndex)
-			# printBoard()
-			# print("-"*n)
-
 
 		if numberOfMoves % 1000 == 0:
 			print "%d" % (numberOfMoves)
 		# Goal Test
-		# if numberOfMoves % (n/10) == 0:
 		if sum(rowConflicts) == 0:
 			# printBoard()
 			timeEnd = float(time.time())
