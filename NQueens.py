@@ -16,8 +16,8 @@ EMPTY = "#"
 
 def conflicts(row, col):
 	numThreats = rightAboveConflict(row, col) + rightBottomConflict(row, col)
-	numThreats += leftAboveConflict(row, col) + aboveConflict(row, col)
-	numThreats += bottomConflict(row, col)
+	numThreats += leftAboveConflict(row, col) + leftBottomConflict(row, col)
+	numThreats += bottomConflict(row, col) + aboveConflict(row, col)
 	return numThreats
 
 
@@ -177,9 +177,9 @@ if __name__ == "__main__":
 	while(True):
 		numberOfMoves += 1
 
-		# Select a radnom variable (row)
+		# Select a radnom variable row
 		r = random.randint(0, n-1)
-		# Assign it the minimum conflict value (column)
+		# Assign it the minimum conflict column -------------------------
 		myRow = board[r]
 		minConflict = rowConflicts[r]
 		initialIndex = board[r].index(QUEEN)
@@ -215,11 +215,13 @@ if __name__ == "__main__":
 			updateConflicts(r, initialIndex)
 			updateConflicts(r, minConflictIndex)
 
+
+		# Print number of steps
 		if numberOfMoves % 1000 == 0:
 			print "%d" % (numberOfMoves)
 		# Goal Test
 		if sum(rowConflicts) == 0:
-			# printBoard()
+			printBoard()
 			timeEnd = float(time.time())
 			timeDiff = timeEnd - timeStart
 			print "DONE!"
