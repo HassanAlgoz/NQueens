@@ -17,121 +17,60 @@ EMPTY = "#"
 
 
 def conflicts(row, col):
-	numThreats = rightAboveConflict(row, col) + rightBottomConflict(row, col)
-	numThreats += leftAboveConflict(row, col) + leftBottomConflict(row, col)
-	numThreats += bottomConflict(row, col) + aboveConflict(row, col)
-	return numThreats
-
-
-def updateConflicts(row, col):
-	# Update conflicts on values who might be affected
-	# Affected Variables are variables who are either
-	# in the same column, or diagonals. So we update
-	# them. This way we don't have to check the whole
-	# board.
-
-	# Above Queen
+# def aboveConflict(row, col):
+	numThreats = 0
 	i = row
+	j = col
 	while(i > 0):
 		i -= 1
-		if board[i][col] == QUEEN:
-			rowConflicts[i] = conflicts(i, col)
-			break
+		if board[i][j] == QUEEN:
+			numThreats += 1
 
-	# Below Queen
+# def bottomConflict(row, col):
 	i = row
+	j = col
 	while(i < n-1):
 		i += 1
-		if board[i][col] == QUEEN:
-			rowConflicts[i] = conflicts(i, col)
-			break
+		if board[i][j] == QUEEN:
+			numThreats += 1
 
-	# rightAbove Queen
+# def rightAboveConflict(row, col):
 	i = row
 	j = col
 	while(i > 0 and j < n-1):
 		i -= 1
 		j += 1
 		if board[i][j] == QUEEN:
-			rowConflicts[i] = conflicts(i, j)
-			break
+			numThreats += 1
 
-	# rightBottom Queen
+# def rightBottomConflict(row, col):
 	i = row
 	j = col
 	while(i < n-1 and j < n-1):
 		i += 1
 		j += 1
 		if board[i][j] == QUEEN:
-			rowConflicts[i] = conflicts(i, j)
-			break
+			numThreats += 1
 
-	# leftAbove Queen
+# def leftAboveConflict(row, col):
 	i = row
 	j = col
 	while(i > 0 and j > 0):
 		i -= 1
 		j -= 1
 		if board[i][j] == QUEEN:
-			rowConflicts[i] = conflicts(i, j)
-			break
+			numThreats += 1
 
-	# leftBottom Queen
+# def leftBottomConflict(row, col):
 	i = row
 	j = col
 	while(i < n-1 and j > 0):
 		i += 1
 		j -= 1
 		if board[i][j] == QUEEN:
-			rowConflicts[i] = conflicts(i, j)
-			break
-
-
-def aboveConflict(row, col):
-	while(row > 0):
-		row -= 1
-		if board[row][col] == QUEEN:
-			return 1
-	return 0
-
-def bottomConflict(row, col):
-	while(row < n-1):
-		row += 1
-		if board[row][col] == QUEEN:
-			return 1
-	return 0
-
-def rightAboveConflict(row, col):
-	while(row > 0 and col < n-1):
-		row -= 1
-		col += 1
-		if board[row][col] == QUEEN:
-			return 1
-	return 0
-
-def rightBottomConflict(row, col):
-	while(row < n-1 and col < n-1):
-		row += 1
-		col += 1
-		if board[row][col] == QUEEN:
-			return 1
-	return 0
-
-def leftAboveConflict(row, col):
-	while(row > 0 and col > 0):
-		row -= 1
-		col -= 1
-		if board[row][col] == QUEEN:
-			return 1
-	return 0
-
-def leftBottomConflict(row, col):
-	while(row < n-1 and col > 0):
-		row += 1
-		col -= 1
-		if board[row][col] == QUEEN:
-			return 1
-	return 0
+			numThreats += 1
+	
+	return numThreats
 
 
 def move(row, old, new):
@@ -142,6 +81,7 @@ def move(row, old, new):
 def printBoard():
 	for i in range(n):
 		print("".join(board[i]))
+	print "-"*n
 
 
 def isGoal():
@@ -200,7 +140,6 @@ def solve(t):
 				minIndexes.append(j)
 
 		# Break ties randomly
-		# only if there is a duplicate min conflict
 		if len(minIndexes) > 1:
 			rnd = minIndexes[random.randint(0, len(minIndexes) - 1)]
 			minConflictIndex = rnd
@@ -211,20 +150,21 @@ def solve(t):
 			move(myRow, initialIndex, minConflictIndex)
 
 
+		if numberOfMoves % 1000 == 0:
+			printBoard()
+
 		# Goal Test
 		if minConflict == 0:
 			if isGoal():
 				# printBoard()
 				timeEnd = float(time.time())
-				timeDiff = timeEnd - timeStart
+				timeDiff = float(timeEnd - timeStart)
 				print "DONE!"
 				print "     \tN\tSeconds\tLoops\tMoves\tMoves/Loops"
-				print "     \t%d\t%.2f\t%d\t%d\t%.2f" % (n, timeDiff, numberOfLoops, numberOfMoves, float(numberOfMoves)/numberOfLoops)
+				print "     \t%d\t%.3f\t%d\t%d\t%.2f" % (n, timeDiff, numberOfLoops, numberOfMoves, float(numberOfMoves)/numberOfLoops)
 				print "--------------------------------------------------"
 				return (timeDiff, numberOfLoops, numberOfMoves, float(numberOfMoves)/numberOfLoops)
 
-def average(array):
-	return sum(array)/len(array)
 
 if __name__ == "__main__":
 	# Get Input
@@ -253,4 +193,4 @@ if __name__ == "__main__":
 
 	print "Average of %d times" % (times)
 	print "\tN\tSeconds\tLoops\tMoves\tMoves/Loops"
-	print "\t%d\t%.2f\t%d\t%d\t%.2f" % (n, avgTimeDiff, avgNumberOfLoops, avgNumberOfMoves, avgRatio)
+	print "\t%d\t%.3f\t%d\t%d\t%.2f" % (n, avgTimeDiff, avgNumberOfLoops, avgNumberOfMoves, avgRatio)
