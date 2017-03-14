@@ -48,18 +48,18 @@ def conflicts(row, col):
 
 def updateConflicts(row, col):
 	# Column
-	for i in range(n):
-		if board[i][col] == QUEEN and i != row:
-			rowConflicts[i] = conflicts(i, col)
+	for i in range(len(rowConflicts)):
+		if board[rowConflicts[i][0]][col] == QUEEN and i != row:
+			rowConflicts[i][1] = conflicts(i, col)
 			break
 
 	# Top-Left to Bottom-Right (Diagonal)
 	m = min(row, col)
 	i = row-m
 	j = col-m
-	while(i < n and j < n):
-		if board[i][j] == QUEEN and i != row and j != col:
-			rowConflicts[i] = conflicts(i, j)
+	while(i < len(rowConflicts) and j < n):
+		if board[rowConflicts[i][0]][j] == QUEEN and i != row and j != col:
+			rowConflicts[i][1] = conflicts(i, j)
 			break
 		i += 1
 		j += 1
@@ -68,9 +68,9 @@ def updateConflicts(row, col):
 	m = min(row, n-col-1)
 	i = row-m
 	j = col+m
-	while(i < n and j >= 0):
-		if board[i][j] == QUEEN and i != row and j != col:
-			rowConflicts[i] = conflicts(i, j)
+	while(i < len(rowConflicts) and j >= 0):
+		if board[rowConflicts[i][0]][j] == QUEEN and i != row and j != col:
+			rowConflicts[i][1] = conflicts(i, j)
 			break
 		i += 1
 		j -= 1
@@ -85,6 +85,7 @@ def printBoard():
 	for i in range(n):
 		print("".join(board[i]))
 	print "-"*n
+
 
 def isGoal():
 	for i in range(n):
@@ -128,7 +129,7 @@ def solve(t):
 
 	timeEnd = float(time.time())
 	timeDiff = float(timeEnd - timeStart)
-	print "Board Initialized in %.f seconds" % (timeDiff)
+	print "Board Initialized in %.fms" % (timeDiff*1000)
 	timeStart = float(time.time())
 	# -------------------------------------------------------------------
 
@@ -136,15 +137,18 @@ def solve(t):
 	for i in range(n):
 		col = board[i].index(QUEEN)
 		conflictResult = conflicts(i, col)
-		rowConflicts.append(conflictResult)
-
+		if(conflictResult != 0):
+			rowConflicts.append([i, conflictResult])
 	# Game Loop (one game)
 	numberOfMoves = 0
 	numberOfLoops = 0
+	# init random list from 0 to n-1
+	randomNumList = []
+	for i in range(n):
+		randomNumList.append(i)
 	while(numberOfMoves < n*2):
 		numberOfLoops += 1
-
-		if sum(rowConflicts) == 0:
+		if sum(item[1] for item in rowConflicts) == 0:
 			# printBoard()
 			timeEnd = float(time.time())
 			timeDiff = float(timeEnd - timeStart)
@@ -156,12 +160,16 @@ def solve(t):
 			break
 
 		#get random row however in rowconflicts
-		r = random.randint(0, n-1)
-		while(rowConflicts[r] == 0):
-			r = random.randint(0, n-1)
+		r = random.randint(0, len(rowConflicts)-1)
+		while(rowConflicts[r][1] == 0):
+			rowConflicts.pop(r)
+			r = random.randint(0, len(rowConflicts)-1)
+		# print("row: ")
+		# print(r)
+		# print(rowConflicts)
 
 		myRow = board[r]
-		minConflict = rowConflicts[r]
+		minConflict = rowConflicts[r][1]
 		initialIndex = board[r].index(QUEEN)
 		minConflictIndex = initialIndex
 
@@ -187,7 +195,7 @@ def solve(t):
 		# Move
 		numberOfMoves += 1
 		move(myRow, initialIndex, minConflictIndex)
-		rowConflicts[r] = minConflict
+		rowConflicts[r][1] = minConflict
 		updateConflicts(r, initialIndex)
 		updateConflicts(r, minConflictIndex)
 
