@@ -20,7 +20,7 @@ def conflicts(row, col):
 	for i in range(len(board)):
 		if board[i][col] == QUEEN and i != row:
 			numThreats += 1
-			break
+	
 
 	# Top-Left to Bottom-Right (Diagonal)
 	m = min(row, col)
@@ -29,7 +29,7 @@ def conflicts(row, col):
 	while(i < len(board) and j < n):
 		if board[i][j] == QUEEN and i != row and j != col:
 			numThreats += 1
-			break
+	
 		i += 1
 		j += 1
 
@@ -40,7 +40,7 @@ def conflicts(row, col):
 	while(i < len(board) and j >= 0):
 		if board[i][j] == QUEEN and i != row and j != col:
 			numThreats += 1
-			break
+	
 		i += 1
 		j -= 1
 
@@ -51,7 +51,7 @@ def updateConflicts(row, col):
 	for i in range(len(rowConflicts)):
 		if board[rowConflicts[i][0]][col] == QUEEN and i != row:
 			rowConflicts[i][1] = conflicts(i, col)
-			break
+	
 
 	# Top-Left to Bottom-Right (Diagonal)
 	m = min(row, col)
@@ -60,7 +60,7 @@ def updateConflicts(row, col):
 	while(i < len(rowConflicts) and j < n):
 		if board[rowConflicts[i][0]][j] == QUEEN and i != row and j != col:
 			rowConflicts[i][1] = conflicts(i, j)
-			break
+	
 		i += 1
 		j += 1
 
@@ -71,7 +71,7 @@ def updateConflicts(row, col):
 	while(i < len(rowConflicts) and j >= 0):
 		if board[rowConflicts[i][0]][j] == QUEEN and i != row and j != col:
 			rowConflicts[i][1] = conflicts(i, j)
-			break
+	
 		i += 1
 		j -= 1
 
@@ -149,14 +149,15 @@ def solve(t):
 	while(numberOfMoves < n*2):
 		numberOfLoops += 1
 		if sum(item[1] for item in rowConflicts) == 0:
-			# printBoard()
 			timeEnd = float(time.time())
 			timeDiff = float(timeEnd - timeStart)
 			print "DONE!"
+			printBoard()
 			print "     \tN\tSeconds\tLoops\tMoves\tMoves/Loops"
 			print "     \t%d\t%.3f\t%d\t%d\t%.2f" % (n, timeDiff, numberOfLoops, numberOfMoves, float(numberOfMoves)/numberOfLoops)
 			print "--------------------------------------------------"
 			return (timeDiff, numberOfLoops, numberOfMoves, float(numberOfMoves)/numberOfLoops)
+
 			break
 
 		#get random row however in rowconflicts

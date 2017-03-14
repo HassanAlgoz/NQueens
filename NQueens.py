@@ -128,7 +128,7 @@ def solve(t):
 
 	timeEnd = float(time.time())
 	timeDiff = float(timeEnd - timeStart)
-	print "Board Initialized in %.f seconds" % (timeDiff)
+	print "Board Initialized in %.3f seconds" % (timeDiff)
 	timeStart = float(time.time())
 	# -------------------------------------------------------------------
 
@@ -185,11 +185,12 @@ def solve(t):
 			minConflictIndex = minCellsConflicts[rnd]
 
 		# Move
-		numberOfMoves += 1
-		move(myRow, initialIndex, minConflictIndex)
-		rowConflicts[r] = minConflict
-		updateConflicts(r, initialIndex)
-		updateConflicts(r, minConflictIndex)
+		if minConflictIndex != initialIndex:
+			numberOfMoves += 1
+			move(myRow, initialIndex, minConflictIndex)
+			rowConflicts[r] = minConflict
+			updateConflicts(r, initialIndex)
+			updateConflicts(r, minConflictIndex)
 
 	return (0, 0, 0, 0)
 
