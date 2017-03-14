@@ -17,7 +17,7 @@ EMPTY = "#"
 def conflicts(row, col):
 	numThreats = 0
 	# Column
-	for i in range(n):
+	for i in range(len(board)):
 		if board[i][col] == QUEEN and i != row:
 			numThreats += 1
 			break
@@ -26,7 +26,7 @@ def conflicts(row, col):
 	m = min(row, col)
 	i = row-m
 	j = col-m
-	while(i < n and j < n):
+	while(i < len(board) and j < n):
 		if board[i][j] == QUEEN and i != row and j != col:
 			numThreats += 1
 			break
@@ -37,7 +37,7 @@ def conflicts(row, col):
 	m = min(row, n-col-1)
 	i = row-m
 	j = col+m
-	while(i < n and j >= 0):
+	while(i < len(board) and j >= 0):
 		if board[i][j] == QUEEN and i != row and j != col:
 			numThreats += 1
 			break
@@ -102,15 +102,34 @@ def solve(t):
 	timeStart = float(time.time())
 	for i in range(n):
 		row = []
-		r = random.randint(0, n-1)
 		for j in range(n):
 			row.append(EMPTY)
-		row[r] = QUEEN
+		#choose least conflicted col
+		minConflict = n
+		minConflictIndex = 0
+		cellsConflicts = []
+		for j in range(n):
+			conflictResult = conflicts(i, j)
+			if conflictResult < minConflict:
+				minConflict = conflictResult
+			cellsConflicts.append(conflictResult)
+
+		minCellsConflicts = []
+
+		for j in range(n):
+			if cellsConflicts[j] == minConflict:
+				minCellsConflicts.append(j)
+
+		if len(minCellsConflicts) > 0:
+			rnd = random.randint(0,len(minCellsConflicts)-1)
+			minConflictIndex = minCellsConflicts[rnd]
+
+		row[minConflictIndex] = QUEEN
 		board.append(row)
 
 	timeEnd = float(time.time())
 	timeDiff = float(timeEnd - timeStart)
-	print "Board Initialized in %.fms" % (timeDiff*1000)
+	print "Board Initialized in %.f seconds" % (timeDiff)
 	timeStart = float(time.time())
 	# -------------------------------------------------------------------
 
