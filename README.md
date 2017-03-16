@@ -1,4 +1,4 @@
-# NQueens Problem [100 Points]
+# NQueens Problem
 The N-Queens problem is the problem of positioning N Queens on a NxN chess board such that no Queen can "take" another Queen by moving horizontally, vertically, or diagonally (standard chess Queen movement).
 
 Write a program to solve the N-Queens problem the iterative improvement technique and the min-Conflict measure. This problem requires that your program find a solution to the problem of placing the largest number of queens on a chess board with the constraint that no queen can "take" any other queen. Your program should print out the reached solution.
