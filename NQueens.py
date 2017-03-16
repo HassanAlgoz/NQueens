@@ -86,14 +86,6 @@ def printBoard():
 		print("".join(board[i]))
 	print "-"*n
 
-def isGoal():
-	for i in range(n):
-		for j in range(n):
-			if board[i][j] == QUEEN:
-				if conflicts(i, j) != 0:
-					return False
-	return True
-
 
 def solve(t):
 	print "#%d Solving for %d Queens.." % (t+1, n)
@@ -145,14 +137,14 @@ def solve(t):
 		numberOfLoops += 1
 
 		if sum(rowConflicts) == 0:
-			# printBoard()
+			printBoard()
 			timeEnd = float(time.time())
 			timeDiff = float(timeEnd - timeStart)
 			print "DONE!"
-			print "     \tN\tSeconds\tLoops\tMoves\tMoves/Loops"
-			print "     \t%d\t%.3f\t%d\t%d\t%.2f" % (n, timeDiff, numberOfLoops, numberOfMoves, float(numberOfMoves)/numberOfLoops)
+			print "     \tN\tSeconds\tLoops\tMoves"
+			print "     \t%d\t%.3f\t%d\t%d" % (n, timeDiff, numberOfLoops, numberOfMoves)
 			print "--------------------------------------------------"
-			return (timeDiff, numberOfLoops, numberOfMoves, float(numberOfMoves)/numberOfLoops)
+			return (timeDiff, numberOfLoops, numberOfMoves)
 			break
 
 		#get random row however in rowconflicts
@@ -185,12 +177,11 @@ def solve(t):
 			minConflictIndex = minCellsConflicts[rnd]
 
 		# Move
-		if minConflictIndex != initialIndex:
-			numberOfMoves += 1
-			move(myRow, initialIndex, minConflictIndex)
-			rowConflicts[r] = minConflict
-			updateConflicts(r, initialIndex)
-			updateConflicts(r, minConflictIndex)
+		numberOfMoves += 1
+		move(myRow, initialIndex, minConflictIndex)
+		rowConflicts[r] = minConflict
+		updateConflicts(r, initialIndex)
+		updateConflicts(r, minConflictIndex)
 
 	return (0, 0, 0, 0)
 
@@ -215,19 +206,17 @@ if __name__ == "__main__":
 	totalTimeDiff = 0
 	totalNumberOfLoops = 0
 	totalNumberOfMoves = 0
-	totalRatio = 0
-	for timeDiff, numberOfLoops, numberOfMoves, ratio in stats:
+
+	for timeDiff, numberOfLoops, numberOfMoves in stats:
 		totalTimeDiff += timeDiff
 		totalNumberOfLoops += numberOfLoops
 		totalNumberOfMoves += numberOfMoves
-		totalRatio += ratio
 
 	avgTimeDiff = totalTimeDiff/times
 	avgNumberOfLoops = totalNumberOfLoops/times
 	avgNumberOfMoves = totalNumberOfMoves/times
-	avgRatio = totalRatio/times
 
 	print "Average of %d times" % (times)
-	print "\tN\tSeconds\tLoops\tMoves\tMoves/Loops"
-	print "\t%d\t%.3f\t%d\t%d\t%.2f" % (n, avgTimeDiff, avgNumberOfLoops, avgNumberOfMoves, avgRatio)
+	print "\tN\tSeconds\tLoops\tMoves"
+	print "\t%d\t%.3f\t%d\t%d" % (n, avgTimeDiff, avgNumberOfLoops, avgNumberOfMoves)
 	print "Total time: %.3f seconds" % (time.time() - totalTime)
