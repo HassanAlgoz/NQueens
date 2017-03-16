@@ -7,11 +7,7 @@ Note 1: Since this is an iterative approach, you should run your solution 1000 t
 
 Note 2: Your code should be flexible to run for different values of N (the number of queens). The average execution times using 1000 runs and different values of N should be provided in a table similar to that below:
 
-| N           | 10^1 | 10^2 | 10^3 | 10^4 |
-|-------------|:----:|-----:|------|------|
-| Time (sec?) |      |      |      |      |
-
-run
+To run 10-Queens 1000 times run:
 ```
-python NQueens.py 10 && python NQueens.py 50 && python NQueens.py 100 && python NQueens.py 150 && python NQueens.py 250 && python NQueens.py 500 && python NQueens.py 750 && python NQueens.py 1000
+python NQueens.py 10 1000
 ```
